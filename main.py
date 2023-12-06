@@ -116,7 +116,8 @@ class mainwin(QMainWindow, Ui_MainWindow):
         self.bpm_avg = 60
         self.ModeDict = {'GREEN': self.processor.GREEN,
                          'GREEN-RED': self.processor.GREEN_RED, 'CHROM': self.processor.CHROM,
-                         'PBV': self.processor.PBV}
+                         'PBV': self.processor.PBV, 'LGI': self.processor.LGI, 'POS': self.processor.POS,
+                         'ICA-POH': self.processor.ICA_POH}
         self.Mode = self.ModeDict['GREEN']
         self.Data_ShowRaw = True
         self.slot_init()
