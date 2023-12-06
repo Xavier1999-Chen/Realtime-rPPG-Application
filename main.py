@@ -10,7 +10,7 @@ from PyQt5.QtCore import *
 
 import pyqtgraph as pg
 
-from obspy.signal.detrend import spline
+#from obspy.signal.detrend import spline
 from scipy import signal
 import numpy as np
 import cv2 as cv

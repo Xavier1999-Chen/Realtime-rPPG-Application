@@ -6,7 +6,8 @@ LastEditTime: 2022-02-20 16:31:34
 Description:
 '''
 import copy
-from obspy.signal.detrend import polynomial, spline
+from numpy.polynomial import polynomial
+#from obspy.signal.detrend import polynomial, spline
 from scipy import signal
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
@@ -146,6 +147,11 @@ def detrend(input_signal, lambda_value):
         filtered_signal = np.dot(
             (H - np.linalg.inv(H + (lambda_value ** 2) * np.dot(D.T, D))), input_signal)
         return filtered_signal
+def detrend_polynomial(sig, order=2):
+        time = np.arange(len(sig))
+        coefficients = np.polyfit(time, sig, order)
+        detrended_sig = sig - np.polyval(coefficients, time)
+        return detrended_sig
 class Series2rPPG():
     def __init__(self) -> None:
         # load hist series from CAM
@@ -157,13 +163,13 @@ class Series2rPPG():
         self.series_class.PROCESS_start()
 
     def Signal_Preprocessing_single(self, sig):
-        return polynomial(sig, order=2)
+        return detrend_polynomial(sig, order=2)
 
     def Signal_Preprocessing(self, rgbsig):
         data = np.array(rgbsig)
-        data_r = polynomial(data[:, 0], order=2)
-        data_g = polynomial(data[:, 1], order=2)
-        data_b = polynomial(data[:, 2], order=2)
+        data_r = detrend_polynomial(data[:, 0], order=2)
+        data_g = detrend_polynomial(data[:, 1], order=2)
+        data_b = detrend_polynomial(data[:, 2], order=2)
 
         return np.array([data_r, data_g, data_b]).T
     def LGI(self, signal):

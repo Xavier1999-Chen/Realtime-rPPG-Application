@@ -17,7 +17,7 @@ class CAM2FACE:
         # get face detector and 68 face landmark
         self.detector = dlib.get_frontal_face_detector()
         self.predictor = dlib.shape_predictor(
-            'data/shape_predictor_81_face_landmarks.dat')
+            'shape_predictor_81_face_landmarks.dat')
 
         # get frontal camera of computer and get fps
         self.cam = cv.VideoCapture(0)
@@ -283,14 +283,15 @@ class CAM2FACE:
 
 if __name__ == '__main__':
     cam2roi = CAM2FACE()
+    #print('Successful catch the cam')
     cam2roi.PROCESS_start()
     Hist_left_list = []
     Hist_right_list = []
     while True:
         print(cam2roi.fps)
-    # time.sleep(1)
-    # while True:
-    # Hist_left = cam2roi.Queue_RGBhist_left.get()
-    # Hist_right = cam2roi.Queue_RGBhist_right.get()
-    # print(Hist_left)
-    # cam2roi.__del__()
+    #time.sleep(1)
+    #while True:
+        #Hist_left = cam2roi.Queue_RGBhist_left.get()
+        #Hist_right = cam2roi.Queue_RGBhist_right.get()
+        #print(Hist_left)
+        #cam2roi.__del__()
