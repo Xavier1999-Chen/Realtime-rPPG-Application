@@ -25,9 +25,14 @@ class mainwin(QMainWindow, Ui_MainWindow):
         super(mainwin, self).__init__(parent)
         self.setupUi(self)
 
+        # 直方图
         self.Hist_fore = pg.PlotWidget(self)
         self.Hist_left = pg.PlotWidget(self)
         self.Hist_right = pg.PlotWidget(self)
+
+        self.Hist_fore.setBackground(None)  # 设置背景色为透明
+        self.Hist_left.setBackground(None)
+        self.Hist_right.setBackground(None)
 
         self.Hist_fore.setYRange(0, 0.2)
         self.Hist_left.setYRange(0, 0.2)
@@ -49,30 +54,45 @@ class mainwin(QMainWindow, Ui_MainWindow):
         self.Layout_Signal.addWidget(self.Hist_left)
         self.Layout_Signal.addWidget(self.Hist_right)
 
+        # 波形图
         self.Signal_fore = pg.PlotWidget(self)
         self.Signal_left = pg.PlotWidget(self)
         self.Signal_right = pg.PlotWidget(self)
+
+        self.Signal_fore.setBackground(None)  # 设置背景色为透明
+        self.Signal_left.setBackground(None)
+        self.Signal_right.setBackground(None)  
 
         self.Sig_f = self.Signal_fore.plot()
         self.Sig_l = self.Signal_left.plot()
         self.Sig_r = self.Signal_right.plot()
 
+        # 频谱图
         self.Spectrum_fore = pg.PlotWidget(self)
         self.Spectrum_left = pg.PlotWidget(self)
         self.Spectrum_right = pg.PlotWidget(self)
 
+        self.Spectrum_fore.setBackground(None) 
+        self.Spectrum_left.setBackground(None)
+        self.Spectrum_right.setBackground(None)
+
         self.Spec_f = self.Spectrum_fore.plot()
         self.Spec_l = self.Spectrum_left.plot()
         self.Spec_r = self.Spectrum_right.plot()
+        
 
         font = QFont()
         font.setPointSize(12)
         font.setBold(True)
+        # palette = QPalette()
+        # palette.setColor(QPalette.WindowText, Qt.black)  # 设置字体颜色为红色
+
 
         font.setWeight(75)
 
         self.label_fore.setFont(font)
         self.label_fore.setText("Forehead Signal")
+        # self.label_fore.setPalette(palette)
         self.Layout_BVP.addWidget(self.label_fore)
 
         self.Layout_BVP.addWidget(self.Signal_fore)
@@ -147,9 +167,9 @@ class mainwin(QMainWindow, Ui_MainWindow):
     def DisplayImage(self):
         # frame = self.processor.series_class.frame_display
         Mask = self.processor.series_class.face_mask
-        Mask = cv.ellipse(Mask, [320, 240], [80, 120], 0, 0, 360,
-                          [0, 255, 0], 1, cv.LINE_AA)
-        Mask = cv.circle(Mask, [320, 240], 2, [255, 0, 0], 2, cv.LINE_AA)
+        # Mask = cv.ellipse(Mask, [320, 240], [80, 120], 0, 0, 360,
+        #                   [0, 255, 0], 1, cv.LINE_AA)
+        # Mask = cv.circle(Mask, [320, 240], 2, [255, 0, 0], 2, cv.LINE_AA)
 
         if Mask is not None:
             # Mask = cv.resize(Mask, (331, 321))
@@ -213,11 +233,15 @@ class mainwin(QMainWindow, Ui_MainWindow):
                 self.bpm_fore = self.processor.cal_bpm(
                     self.bpm_fore, self.spc_fore, self.processor.series_class.fps)
                 if self.Data_ShowRaw:
-                    self.Sig_f.setData(self.bvp_fore_raw, pen=(0, 255, 255))
+                    # self.Sig_f.setData(self.bvp_fore_raw, pen=(0, 255, 255))
+                    self.Sig_f.setData(self.bvp_fore_raw, pen=(255, 0, 0))
                 else:
-                    self.Sig_f.setData(self.bvp_fore, pen=(0, 255, 255))
+                    # self.Sig_f.setData(self.bvp_fore, pen=(0, 255, 255))
+                    self.Sig_f.setData(self.bvp_fore, pen=(255, 0, 0))
+                # self.Spec_f.setData(np.linspace(0,self.processor.series_class.fps/2*60,int((len(self.spc_fore)+1)/2)),
+                #     self.spc_fore[:int((len(self.spc_fore)+1)/2)], pen=(0, 255, 255))
                 self.Spec_f.setData(np.linspace(0,self.processor.series_class.fps/2*60,int((len(self.spc_fore)+1)/2)),
-                    self.spc_fore[:int((len(self.spc_fore)+1)/2)], pen=(0, 255, 255))
+                    self.spc_fore[:int((len(self.spc_fore)+1)/2)], pen=(255, 0, 0))
             else:
                 self.Sig_f.setData([0], [0])
                 self.Spec_f.setData([0], [0])
@@ -232,11 +256,15 @@ class mainwin(QMainWindow, Ui_MainWindow):
                 self.bpm_left = self.processor.cal_bpm(
                     self.bpm_left, self.spc_left, self.processor.series_class.fps)
                 if self.Data_ShowRaw:
-                    self.Sig_l.setData(self.bvp_left_raw, pen=(255, 0, 255))
+                    # self.Sig_l.setData(self.bvp_left_raw, pen=(255, 0, 255))
+                    self.Sig_l.setData(self.bvp_left_raw, pen=(0, 255, 0))
                 else:
-                    self.Sig_l.setData(self.bvp_left, pen=(255, 0, 255))
+                    # self.Sig_l.setData(self.bvp_left, pen=(255, 0, 255))
+                    self.Sig_l.setData(self.bvp_left, pen=(0, 255, 0))
+                # self.Spec_l.setData(np.linspace(0,self.processor.series_class.fps/2*60,int((len(self.spc_left)+1)/2)),
+                #     self.spc_left[:int((len(self.spc_left)+1)/2)], pen=(255, 0, 255))
                 self.Spec_l.setData(np.linspace(0,self.processor.series_class.fps/2*60,int((len(self.spc_left)+1)/2)),
-                    self.spc_left[:int((len(self.spc_left)+1)/2)], pen=(255, 0, 255))
+                    self.spc_left[:int((len(self.spc_left)+1)/2)], pen=(0, 255, 0))
             else:
                 self.Sig_l.setData([0], [0])
                 self.Spec_l.clear([0], [0])
@@ -251,11 +279,15 @@ class mainwin(QMainWindow, Ui_MainWindow):
                 self.bpm_right = self.processor.cal_bpm(
                     self.bpm_right, self.spc_right, self.processor.series_class.fps)
                 if self.Data_ShowRaw:
-                    self.Sig_r.setData(self.bvp_right_raw, pen=(255, 255, 0))
+                    # self.Sig_r.setData(self.bvp_right_raw, pen=(255, 255, 0))
+                    self.Sig_r.setData(self.bvp_right_raw, pen=(0, 0, 255))
                 else:
-                    self.Sig_r.setData(self.bvp_right, pen=(255, 255, 0))
+                    # self.Sig_r.setData(self.bvp_right, pen=(255, 255, 0))
+                    self.Sig_r.setData(self.bvp_right, pen=(0, 0, 255))
+                # self.Spec_r.setData(np.linspace(0,self.processor.series_class.fps/2*60,int((len(self.spc_right)+1)/2)),
+                #     self.spc_right[:int((len(self.spc_right)+1)/2)], pen=(255, 255, 0))
                 self.Spec_r.setData(np.linspace(0,self.processor.series_class.fps/2*60,int((len(self.spc_right)+1)/2)),
-                    self.spc_right[:int((len(self.spc_right)+1)/2)], pen=(255, 255, 0))
+                    self.spc_right[:int((len(self.spc_right)+1)/2)], pen=(0, 0, 255))
             else:
                 self.Sig_r.setData([0], [0])
                 self.Spec_r.setData([0], [0])
