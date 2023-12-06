@@ -1,5 +1,9 @@
 # Realtime-rPPG-Application
-
+# Pack
+```bash
+pyinstaller -F main.py
+```
+将产生的dist文件夹中的main.exe复制到与main.py相同目录下，再运行
 ## Preqrequisites
 
 ```bash
