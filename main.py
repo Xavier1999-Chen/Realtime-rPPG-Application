@@ -1,11 +1,3 @@
-'''
-Author: Harryhht
-Date: 2022-02-01 20:51:25
-LastEditors: Harryhht
-LastEditTime: 2022-02-21 02:02:50
-Description: Main structure for the application
-'''
-
 import sys
 from mainwindow import Ui_MainWindow
 
@@ -76,6 +68,7 @@ class mainwin(QMainWindow, Ui_MainWindow):
         font = QFont()
         font.setPointSize(12)
         font.setBold(True)
+
         font.setWeight(75)
 
         self.label_fore.setFont(font)
@@ -135,6 +128,7 @@ class mainwin(QMainWindow, Ui_MainWindow):
         self.comboBox.activated[str].connect(self.Button_ChangeMode)
         self.Button_RawTrue.clicked.connect(self.Button_Data_RawTrue)
         self.Button_RawFalse.clicked.connect(self.Button_Data_RawFalse)
+        self.Button_Shutdown.clicked.connect(self.shut_down)
 
     def Button_ChangeMode(self, str):
         self.Mode = self.ModeDict[str]
@@ -144,6 +138,10 @@ class mainwin(QMainWindow, Ui_MainWindow):
 
     def Button_Data_RawFalse(self):
         self.Data_ShowRaw = False
+
+    def shut_down(self):
+        self.processor.__del__()
+        sys.exit()
 
     def DisplayImage(self):
         # frame = self.processor.series_class.frame_display
@@ -200,6 +198,7 @@ class mainwin(QMainWindow, Ui_MainWindow):
         high /= nyquist_rate
         b, a = signal.butter(order, [low, high], btype='band')
         return signal.lfilter(b, a, data)
+    
 
     def DisplaySignal(self):
         # Sig_fore = self.processor.Signal_Preprocessing(
@@ -275,8 +274,14 @@ class mainwin(QMainWindow, Ui_MainWindow):
             self.confidence_right = self.quality_right/self.quality_all
             self.bpm_avg = self.bpm_fore*self.confidence_fore+self.bpm_left * \
                 self.confidence_left+self.bpm_right*self.confidence_right
-            Label_Text = "Fs: \t\t"+str(self.processor.series_class.fps)+"\nFore BPM: \t"+str(
-                self.bpm_fore)+"\nFore Confidence: "+str(self.confidence_fore*100)+"%\nLeft BPM: \t"+str(self.bpm_left)+"\nLeft Confidence: "+str(self.confidence_left*100)+"%\nRight BPM:\t"+str(self.bpm_right)+"\nRight Confidence:"+str(self.confidence_right*100)+"%\n\nBPM Overall: \t"+str(self.bpm_avg)
+            Label_Text = "fps: \t\t"+str(round(self.processor.series_class.fps,2)) \
+                            +"\nFore BPM: \t"+str(round(self.bpm_fore,2))+"\nFore Confidence: "\
+                            +str(round(self.confidence_fore*100,2))+"%\nLeft BPM: \t"\
+                            +str(round(self.bpm_left,2))+"\nLeft Confidence: "\
+                            +str(round(self.confidence_left*100,2))+"%\nRight BPM:\t"\
+                            +str(round(self.bpm_right,2))+"\nRight Confidence:"\
+                            +str(round(self.confidence_right*100,2))+"%\n\nBPM Overall: \t"\
+                            +str(round(self.bpm_avg,2))
             self.label.setText(Label_Text)
         else:
             self.Sig_f.setData([0], [0])
@@ -286,7 +291,8 @@ class mainwin(QMainWindow, Ui_MainWindow):
             self.Sig_r.setData([0], [0])
             self.Spec_r.setData([0], [0])
             self.label.setText(
-                "Fs:\t\t"+str(self.processor.series_class.fps)+"\nData Collecting...")
+                "fps:\t\t"+str(round(self.processor.series_class.fps,2))\
+                    +"\nData Collecting...")
 
 
 if __name__ == "__main__":

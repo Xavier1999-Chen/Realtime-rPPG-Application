@@ -29,6 +29,9 @@ class Series2rPPG():
     def PROCESS_start(self):
         self.series_class.PROCESS_start()
 
+    def PROCESS_stop(self):
+        self.series_class.PROCESS_stop()
+
     def Signal_Preprocessing_single(self, sig):
         return polynomial(sig, order=2)
 

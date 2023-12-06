@@ -20,19 +20,18 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         # camera
         self.face = QtWidgets.QLabel(self.centralwidget)
-        # self.face.setGeometry(QtCore.QRect(620, 10, 681, 391))
-        self.face.setGeometry(QtCore.QRect(720, 10, 881, 591))
+        self.face.setGeometry(QtCore.QRect(750, 10, 881, 591))
         self.face.setText("")
         self.face.setObjectName("face")
+        # BVP signal
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        # self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 410, 531, 431))
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 660, 731, 431))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.Layout_BVP = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.Layout_BVP.setContentsMargins(0, 0, 0, 0)
         self.Layout_BVP.setObjectName("Layout_BVP")
+        # BPM Data
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
-        # self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(10, 10, 601, 391))
         self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(10, 10, 701, 691))
         self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
         self.Layout_button = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_2)
@@ -55,9 +54,14 @@ class Ui_MainWindow(object):
         self.Button_RawTrue = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
         self.Button_RawTrue.setObjectName("Button_RawTrue")
         self.horizontalLayout_2.addWidget(self.Button_RawTrue)
-        self.Button_RawFalse = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
+        self.Button_RawFalse = QtWidgets.QPushButton()
         self.Button_RawFalse.setObjectName("Button_RawFalse")
         self.horizontalLayout_2.addWidget(self.Button_RawFalse)
+#
+        self.Button_Shutdown = QtWidgets.QPushButton()
+        self.Button_Shutdown.setObjectName("Exit")
+        self.horizontalLayout_2.addWidget(self.Button_Shutdown)
+#
         self.Layout_button.addLayout(self.horizontalLayout_2)
         self.label = QtWidgets.QLabel(self.verticalLayoutWidget_2)
         self.label.setMinimumSize(QtCore.QSize(0, 300))
@@ -83,8 +87,9 @@ class Ui_MainWindow(object):
         self.Layout_Spec = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_4)
         self.Layout_Spec.setContentsMargins(0, 0, 0, 0)
         self.Layout_Spec.setObjectName("Layout_Spec")
-        MainWindow.setCentralWidget(self.centralwidget)
 
+
+        MainWindow.setCentralWidget(self.centralwidget)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -97,3 +102,4 @@ class Ui_MainWindow(object):
         self.comboBox.setItemText(3, _translate("MainWindow", "PBV"))
         self.Button_RawTrue.setText(_translate("MainWindow", "原始信号"))
         self.Button_RawFalse.setText(_translate("MainWindow", "滤波信号"))
+        self.Button_Shutdown.setText(_translate("MainWindow", "退出程序"))

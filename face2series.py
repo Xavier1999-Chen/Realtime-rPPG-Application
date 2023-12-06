@@ -63,6 +63,10 @@ class CAM2FACE:
         self.capture_process_.start()
         self.roi_cal_process_.start()
 
+    def PROCESS_stop(self):
+        self.capture_process_._stop()
+        self.roi_cal_process_._stop()
+
     # Process: capture frame from camera in specific fps of the camera
     def capture_process(self):
         while self.Ongoing:
