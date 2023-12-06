@@ -4,12 +4,9 @@ from queue import Queue
 
 import cv2 as cv
 import dlib
-import matplotlib.pyplot as plt
+
 import numpy as np
 import copy
-import seaborn as sns
-
-sns.set()
 
 
 class CAM2FACE:
@@ -33,9 +30,7 @@ class CAM2FACE:
         self.QUEUE_MAX = 256
         self.QUEUE_WINDOWS = 64
         self.Queue_rawframe = Queue(maxsize=3)
-        # self.Queue_RGBhist_left = Queue(maxsize=self.QUEUE_MAX)
-        # self.Queue_RGBhist_right = Queue(maxsize=self.QUEUE_MAX)
-        # self.Queue_RGBhist_fore = Queue(maxsize=self.QUEUE_MAX)
+ 
         self.Queue_Sig_left = Queue(maxsize=self.QUEUE_MAX)
         self.Queue_Sig_right = Queue(maxsize=self.QUEUE_MAX)
         self.Queue_Sig_fore = Queue(maxsize=self.QUEUE_MAX)
@@ -131,16 +126,7 @@ class CAM2FACE:
                     self.Flag_Queue = True
                 else:
                     self.Flag_Queue = False
-                # if self.Queue_RGBhist_left.full():
-                #     self.Queue_RGBhist_left.get_nowait()
-                # if self.Queue_RGBhist_right.full():
-                #     self.Queue_RGBhist_right.get_nowait()
-                # if self.Queue_RGBhist_fore.full():
-                #     self.Queue_RGBhist_fore.get_nowait()
 
-                # self.Queue_RGBhist_left.put(rgb_left)
-                # self.Queue_RGBhist_right.put(rgb_right)
-                # self.Queue_RGBhist_fore.put(rgb_fore)
                 self.Queue_Sig_left.put_nowait(
                     self.Hist2Feature(self.hist_left))
                 self.Queue_Sig_right.put_nowait(
@@ -152,9 +138,7 @@ class CAM2FACE:
                 self.hist_left = None
                 self.hist_right = None
                 self.hist_fore = None
-                # self.Queue_RGBhist_left.put(None)
-                # self.Queue_RGBhist_right.put(None)
-                # self.Queue_RGBhist_fore.put(None)
+
                 self.Queue_Sig_left.queue.clear()
                 self.Queue_Sig_right.queue.clear()
                 self.Queue_Sig_fore.queue.clear()
@@ -168,9 +152,7 @@ class CAM2FACE:
             face = faces[0]
             landmarks = [[p.x, p.y]
                          for p in self.predictor(img, face).parts()]
-            # for idx, point in enumerate(self.landmarks):
-            #     pos = (point[0, 0], point[0, 1])
-            #     cv.circle(img, pos, 2, color=(0, 255, 0))
+
         try:
             return landmarks
         except:
@@ -258,10 +240,6 @@ class CAM2FACE:
         hist_g = hist[1]
         hist_b = hist[2]
 
-        # sgn_r = np.tanh(hist_r)
-        # sgn_g = np.tanh(hist_g)
-        # sgn_b = np.tanh(hist_b)
-
         hist_r /= np.sum(hist_r)
         hist_g /= np.sum(hist_g)
         hist_b /= np.sum(hist_b)
@@ -288,9 +266,4 @@ if __name__ == '__main__':
     Hist_right_list = []
     while True:
         print(cam2roi.fps)
-    # time.sleep(1)
-    # while True:
-    # Hist_left = cam2roi.Queue_RGBhist_left.get()
-    # Hist_right = cam2roi.Queue_RGBhist_right.get()
-    # print(Hist_left)
-    # cam2roi.__del__()
+

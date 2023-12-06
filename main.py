@@ -2,15 +2,15 @@ import sys
 from mainwindow import Ui_MainWindow
 
 
-from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication
-from PyQt5 import QtCore
+from PyQt5.QtWidgets import QMainWindow, QApplication
+
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 import pyqtgraph as pg
 
-from obspy.signal.detrend import spline
+
 from scipy import signal
 import numpy as np
 import cv2 as cv
@@ -150,11 +150,7 @@ class mainwin(QMainWindow, Ui_MainWindow):
         Mask = cv.ellipse(Mask, [320, 240], [80, 120], 0, 0, 360,
                           [0, 255, 0], 1, cv.LINE_AA)
         Mask = cv.circle(Mask, [320, 240], 2, [255, 0, 0], 2, cv.LINE_AA)
-        # if frame is not None:
-        #     img = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-        #     qimg = QImage(
-        #         img.data, img.shape[1], img.shape[0], QImage.Format_RGB888)
-        #     self.camera.setPixmap(QPixmap.fromImage(qimg))
+
         if Mask is not None:
             # Mask = cv.resize(Mask, (331, 321))
             img = cv.cvtColor(Mask, cv.COLOR_BGR2RGB)
@@ -202,12 +198,6 @@ class mainwin(QMainWindow, Ui_MainWindow):
     
 
     def DisplaySignal(self):
-        # Sig_fore = self.processor.Signal_Preprocessing(
-        #     self.processor.series_class.Sig_fore)
-        # Sig_left = self.processor.Signal_Preprocessing(
-        #     self.processor.series_class.Sig_left)
-        # Sig_right = self.processor.Signal_Preprocessing(
-        #     self.processor.series_class.Sig_right)
         Sig_fore = np.array(self.processor.series_class.Sig_fore)
         Sig_left = np.array(self.processor.series_class.Sig_left)
         Sig_right = np.array(self.processor.series_class.Sig_right)

@@ -1,27 +1,16 @@
-'''
-Author: Harryhht
-Date: 2022-01-06 10:28:39
-LastEditors: Harryhht
-LastEditTime: 2022-02-20 16:31:34
-Description:
-'''
-import copy
-from obspy.signal.detrend import polynomial, spline
-from scipy import signal
-import matplotlib.pyplot as plt
+from obspy.signal.detrend import polynomial #, spline
+
 from sklearn.decomposition import PCA
-from sklearn.decomposition import FastICA
+
 from scipy import linalg
 from face2series import CAM2FACE
-import threading
-from queue import Queue
+
 import numpy as np
-import seaborn as sns
-import time
+
 import math
 from scipy import sparse
 from scipy import signal as frame
-sns.set()
+# sns.set()
 def ica(X, Nsources, Wprev=0):
     nRows = X.shape[0]
     nCols = X.shape[1]
