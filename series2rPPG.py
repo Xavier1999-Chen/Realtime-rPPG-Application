@@ -1,28 +1,21 @@
-'''
-Author: Harryhht
-Date: 2022-01-06 10:28:39
-LastEditors: Harryhht
-LastEditTime: 2022-02-20 16:31:34
-Description:
-'''
-import copy
-from numpy.polynomial import polynomial
-#from obspy.signal.detrend import polynomial, spline
-from scipy import signal
-import matplotlib.pyplot as plt
+#from obspy.signal.detrend import polynomial #, spline
+
 from sklearn.decomposition import PCA
-from sklearn.decomposition import FastICA
+
 from scipy import linalg
 from face2series import CAM2FACE
-import threading
-from queue import Queue
+
 import numpy as np
-import seaborn as sns
-import time
+
 import math
 from scipy import sparse
 from scipy import signal as frame
-sns.set()
+
+from BaseLoader import nn_preprocess
+import torch
+from neural_methods import trainer
+
+# sns.set()
 def ica(X, Nsources, Wprev=0):
     nRows = X.shape[0]
     nCols = X.shape[1]
@@ -152,11 +145,17 @@ def detrend_polynomial(sig, order=2):
         coefficients = np.polyfit(time, sig, order)
         detrended_sig = sig - np.polyval(coefficients, time)
         return detrended_sig
+
 class Series2rPPG():
     def __init__(self) -> None:
         # load hist series from CAM
         self.series_class = CAM2FACE()
         self.Ongoing = True
+
+        ##########
+        self.TSCAN_model=trainer.TscanTrainer.TscanTrainer()
+        self.PhysFormer_model=trainer.PhysFormerTrainer.PhysFormerTrainer()
+        ##########
 
     # Start Processes
     def PROCESS_start(self):
@@ -301,6 +300,26 @@ class Series2rPPG():
 
     def GREEN_RED(self, signal):
         return signal[:, 1]-signal[:, 0]
+    
+    
+    def PhysFormer_predict(self, frames):
+        process_P=nn_preprocess(frames,128,128,['DiffNormalized'],160)
+        #print('process_P',process_P.shape)
+        P_input = np.transpose(process_P, (0,4,1,2,3))
+        P_input = torch.from_numpy(P_input).float()
+        P_output=self.PhysFormer_model.test(P_input)
+        P_output=P_output.numpy().flatten()
+        return P_output
+
+    def TSCAN_predict(self,frames):
+        process_T=nn_preprocess(frames,72,72,['DiffNormalized','Standardized'],180)
+        # print('process_T',process_T.shape)
+        T_input= np.transpose(process_T,(0,1,4,2,3))
+        T_input = torch.from_numpy(T_input).float()
+        T_output=self.TSCAN_model.test(T_input)
+        T_output=T_output.numpy().flatten()
+        return T_output
+   
     
 
     def cal_bpm(self, pre_bpm, spec, fps):
