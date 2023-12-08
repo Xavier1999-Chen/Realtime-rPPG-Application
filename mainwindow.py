@@ -43,6 +43,8 @@ class Ui_MainWindow(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
         self.horizontalLayout.addWidget(self.comboBox)
         self.Layout_button.addLayout(self.horizontalLayout)
 
@@ -54,6 +56,13 @@ class Ui_MainWindow(object):
         self.Button_RawFalse = QtWidgets.QPushButton()
         self.Button_RawFalse.setObjectName("Button_RawFalse")
         self.horizontalLayout_2.addWidget(self.Button_RawFalse)
+#
+        self.Button_MqttFalse = QtWidgets.QPushButton()
+        self.Button_MqttFalse.setObjectName("Button_MqttFalse")
+        self.horizontalLayout_2.addWidget(self.Button_MqttFalse)
+        self.Button_MqttTrue = QtWidgets.QPushButton()
+        self.Button_MqttTrue.setObjectName("Button_MqttTrue")
+        self.horizontalLayout_2.addWidget(self.Button_MqttTrue)
 #
         self.Button_Shutdown = QtWidgets.QPushButton()
         self.Button_Shutdown.setObjectName("Exit")
@@ -100,6 +109,10 @@ class Ui_MainWindow(object):
         self.comboBox.setItemText(4, _translate("MainWindow", "LGI"))
         self.comboBox.setItemText(5, _translate("MainWindow", "POS"))
         self.comboBox.setItemText(6, _translate("MainWindow", "ICA-POH"))
+        self.comboBox.setItemText(7, _translate("MainWindow", "PhysFormer"))
+        self.comboBox.setItemText(8, _translate("MainWindow", "TSCAN"))
         self.Button_RawTrue.setText(_translate("MainWindow", "原始信号"))
         self.Button_RawFalse.setText(_translate("MainWindow", "滤波信号"))
+        self.Button_MqttTrue.setText(_translate("MainWindow", "远程相机"))
+        self.Button_MqttFalse.setText(_translate("MainWindow", "本地相机"))
         self.Button_Shutdown.setText(_translate("MainWindow", "退出程序"))

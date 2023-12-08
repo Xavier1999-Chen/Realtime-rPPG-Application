@@ -1,4 +1,5 @@
-from obspy.signal.detrend import polynomial #, spline
+#from obspy.signal.detrend import polynomial #, spline
+
 
 from sklearn.decomposition import PCA
 
@@ -10,6 +11,12 @@ import numpy as np
 import math
 from scipy import sparse
 from scipy import signal as frame
+
+
+from BaseLoader import nn_preprocess
+import torch
+from neural_methods import trainer
+
 # sns.set()
 def ica(X, Nsources, Wprev=0):
     nRows = X.shape[0]
@@ -135,24 +142,35 @@ def detrend(input_signal, lambda_value):
         filtered_signal = np.dot(
             (H - np.linalg.inv(H + (lambda_value ** 2) * np.dot(D.T, D))), input_signal)
         return filtered_signal
+def detrend_polynomial(sig, order=2):
+        time = np.arange(len(sig))
+        coefficients = np.polyfit(time, sig, order)
+        detrended_sig = sig - np.polyval(coefficients, time)
+        return detrended_sig
+
 class Series2rPPG():
     def __init__(self) -> None:
         # load hist series from CAM
         self.series_class = CAM2FACE()
         self.Ongoing = True
 
+        ##########
+        self.TSCAN_model=trainer.TscanTrainer.TscanTrainer()
+        self.PhysFormer_model=trainer.PhysFormerTrainer.PhysFormerTrainer()
+        ##########
+
     # Start Processes
     def PROCESS_start(self):
         self.series_class.PROCESS_start()
 
     def Signal_Preprocessing_single(self, sig):
-        return polynomial(sig, order=2)
+        return detrend_polynomial(sig, order=2)
 
     def Signal_Preprocessing(self, rgbsig):
         data = np.array(rgbsig)
-        data_r = polynomial(data[:, 0], order=2)
-        data_g = polynomial(data[:, 1], order=2)
-        data_b = polynomial(data[:, 2], order=2)
+        data_r = detrend_polynomial(data[:, 0], order=2)
+        data_g = detrend_polynomial(data[:, 1], order=2)
+        data_b = detrend_polynomial(data[:, 2], order=2)
 
         return np.array([data_r, data_g, data_b]).T
     def LGI(self, signal):
@@ -284,6 +302,26 @@ class Series2rPPG():
 
     def GREEN_RED(self, signal):
         return signal[:, 1]-signal[:, 0]
+    
+    
+    def PhysFormer_predict(self, frames):
+        process_P=nn_preprocess(frames,128,128,['DiffNormalized'],160)
+        #print('process_P',process_P.shape)
+        P_input = np.transpose(process_P, (0,4,1,2,3))
+        P_input = torch.from_numpy(P_input).float()
+        P_output=self.PhysFormer_model.test(P_input)
+        P_output=P_output.numpy().flatten()
+        return P_output
+
+    def TSCAN_predict(self,frames):
+        process_T=nn_preprocess(frames,72,72,['DiffNormalized','Standardized'],180)
+        # print('process_T',process_T.shape)
+        T_input= np.transpose(process_T,(0,1,4,2,3))
+        T_input = torch.from_numpy(T_input).float()
+        T_output=self.TSCAN_model.test(T_input)
+        T_output=T_output.numpy().flatten()
+        return T_output
+   
     
 
     def cal_bpm(self, pre_bpm, spec, fps):

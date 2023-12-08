@@ -48,6 +48,15 @@ class CAM2FACE:
         self.Sig_right = None
         self.Sig_fore = None
 
+        #neural network
+        self.fs=30
+        self.NN_QUEUE_MAX = 3000
+        self.video=Queue(maxsize=self.NN_QUEUE_MAX)
+        self.NN_Queue_Time = Queue(maxsize=self.QUEUE_WINDOWS)
+
+        self.Flag_P_Queue=False
+        self.Flag_T_Queue=False
+
     # Initialize process and start
 
     def PROCESS_start(self):
@@ -74,6 +83,13 @@ class CAM2FACE:
                 self.fps = 1 / \
                     np.mean(np.diff(np.array(list(self.Queue_Time.queue))))
 
+            ###
+            if self.NN_Queue_Time.full():
+                self.NN_Queue_Time.get_nowait()
+                self.fs = 1 / \
+                    np.mean(np.diff(np.array(list(self.NN_Queue_Time.queue))))
+            ###
+
             # print(self.fps)
             # self.time = time_now
             if not self.ret:
@@ -87,8 +103,18 @@ class CAM2FACE:
             else:
                 self.Queue_Time.put_nowait(time.time())
 
+            #神经网络的图像采集序列
+            if self.video.full():
+                self.video.get_nowait()
+            else:
+                self.NN_Queue_Time.put_nowait(time.time())
+            ###
+
             try:
                 self.Queue_rawframe.put_nowait(frame)
+                ###
+                self.video.put_nowait(frame)
+                ###
             except Exception as e:
                 pass
 
@@ -100,6 +126,20 @@ class CAM2FACE:
             except Exception as e:
                 # print(e)
                 continue
+
+            #################
+            try:
+                self.video.get_nowait()
+            except Exception as e:
+                # print(e)
+                continue
+
+            if len(list(self.video.queue))>=640:
+                self.Flag_P_Queue=True
+            if len(list(self.video.queue))>=720:
+                self.Flag_T_Queue=True            
+
+            #################
 
             # get the roi of the frame (left/right)
             ROI_left, ROI_right, ROI_fore = self.ROI(frame)
