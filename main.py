@@ -1,6 +1,7 @@
 import sys
 from mainwindow import Ui_MainWindow
-
+import paho.mqtt.client as mqtt
+import time
 
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
@@ -162,6 +163,8 @@ class mainwin(QMainWindow, Ui_MainWindow):
                          'ICA-POH': self.processor.ICA_POH,'PhysFormer':True,'TSCAN':True}
         self.Mode = self.ModeDict['GREEN']
         self.Data_ShowRaw = True
+        self.url = None
+        self.message_received = False
         self.slot_init()
 
     def slot_init(self):
@@ -268,13 +271,52 @@ class mainwin(QMainWindow, Ui_MainWindow):
     def Button_Data_RawFalse(self):
         self.Data_ShowRaw = False
 
+    # Define callback function to handle incoming messages
+    def on_message(self, client, userdata, message):
+        self.url = 'http://'+message.payload.decode()+':81/stream'
+        print(f"Received message: {self.url}")
+        self.message_received = True
+    
     def Button_Mqtt_True(self):
-        # self.Mqtt_Mode = True
-        url = 'http://192.168.28.85:81/stream' 
-        self.processor.series_class.cam = cv.VideoCapture(url)
+        # Define MQTT broker details
+        broker_address = "p224517a.emqx.cloud"
+        broker_port = 1883
+        topic = "aiot/esp32/test"
+        mqtt_username = "aiot20"
+        mqtt_password = "12345610"
+      
+        # Create MQTT client and set callback function
+        client = mqtt.Client(userdata={"message_received": False})
+        client.username_pw_set(mqtt_username, mqtt_password)
+
+        client.on_message = self.on_message
+
+        # Connect to MQTT broker
+        client.connect(broker_address, broker_port)
+
+        # Subscribe to the topic
+        client.subscribe(topic)
+
+        # Start the MQTT loop to receive messages
+        client.loop_start()
+
+        # Wait until a message is received or timeout occurs
+        timeout = 10  # seconds
+        start_time = time.time()
+        while not self.message_received:
+            if time.time() - start_time > timeout:
+                break
+
+        if self.url == None:
+            print("Connection timeout.")
+            return
+
+        # url = 'http://192.168.28.85:81/stream' 
+        self.processor.series_class.cam = cv.VideoCapture(self.url)
 
     def Button_Mqtt_False(self):
         # self.Mqtt_Mode = False
+        self.message_received = False
         self.processor.series_class.cam = cv.VideoCapture(0)
         
     def shut_down(self):
