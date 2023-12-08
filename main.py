@@ -335,6 +335,7 @@ class mainwin(QMainWindow, Ui_MainWindow):
     
 
     def DisplaySignal(self):
+
         if self.Mode_str in self.unsupervised_model:
 
             Sig_fore = np.array(self.processor.series_class.Sig_fore)
