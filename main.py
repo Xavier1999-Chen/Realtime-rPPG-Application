@@ -507,4 +507,8 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     ui = mainwin()
     ui.show()
-    sys.exit(app.exec_())
+    if app.exec_()==0:
+        ui.processor.__del__()
+        sys.exit()
+    
+    
