@@ -311,7 +311,7 @@ class mainwin(QMainWindow, Ui_MainWindow):
             print("Connection timeout.")
             return
 
-        # url = 'http://192.168.28.85:81/stream' 
+        # self.url = 'http://192.168.28.85:81/stream' 
         self.processor.series_class.cam = cv.VideoCapture(self.url)
 
     def Button_Mqtt_False(self):
